@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Growlytics Retail Intelligence</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .auth-canvas {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 10% 20%, #0b132b 0%, #1e293b 90%);
+      padding: 20px;
+    }
+    .auth-card {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 440px;
+      padding: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .auth-brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 24px;
+      color: #0b132b;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .demo-credentials-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body class="auth-canvas">
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-brand-icon">G</div>
+      <h2 style="font-size: 22px; font-weight: 800; color: #0b132b; letter-spacing: -0.5px;">Growlytics</h2>
+      <p style="font-size: 13px; color: #64748b; margin-top: 2px;">Turn Insights Into Growth • Retail Operations</p>
+    </div>
+
+    <!-- Quick Demo Box -->
+    <div class="demo-credentials-box">
+      <div style="font-weight: 700; margin-bottom: 4px;">⚡ Prototype Evaluation Account:</div>
+      <div><strong>Email:</strong> admin@growlytics.io</div>
+      <div><strong>Password:</strong> growlytics2026</div>
+      <button type="button" class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%;" onclick="quickFillDemo()">
+        1-Click Fill Demo Credentials
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" onsubmit="handleAuthSubmit(event)">
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label class="form-label">Work Email</label>
+        <input type="email" id="auth-email" class="form-input" placeholder="name@retailer.com" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label">Password</label>
+        <input type="password" id="auth-password" class="form-input" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btn-auth-submit" style="width: 100%; padding: 12px; font-size: 14px;">
+        Sign In to Growlytics
+      </button>
+    </form>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <!-- Google SSO labeled as unavailable -->
+      <button type="button" class="btn btn-secondary" style="width: 100%; opacity: 0.6; cursor: not-allowed;" title="Google SSO is not configured in this prototype">
+        <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right: 6px;">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        Google SSO (Unavailable in Prototype)
+      </button>
+
+      <div style="margin-top: 16px;">
+        <a href="/" style="font-size: 12.5px; color: var(--text-muted); text-decoration: none;">
+          ← Back to Dashboard as Guest
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    function quickFillDemo() {
+      document.getElementById("auth-email").value = "admin@growlytics.io";
+      document.getElementById("auth-password").value = "growlytics2026";
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById("auth-email").value.trim();
+      const password = document.getElementById("auth-password").value.trim();
+      const btn = document.getElementById("btn-auth-submit");
+
+      btn.textContent = "Authenticating...";
+      btn.disabled = true;
+
+      try {
+        const res = await API.post("/api/auth/login", { email, password });
+        showToast(res.message, "success");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 800);
+      } catch (err) {
+        showToast(err.message, "error");
+        btn.textContent = "Sign In to Growlytics";
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

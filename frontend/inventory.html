@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Intelligence — Growlytics</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-header">
+      <div class="brand-icon-box">G</div>
+      <div class="brand-text-wrap">
+        <span class="brand-name">Growlytics</span>
+        <span class="brand-tagline">Turn Insights Into Growth</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-label">Core Platform</span>
+      <a href="/" class="nav-link">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="/inventory" class="nav-link active">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+        Inventory
+        <span class="nav-badge" id="sidebar-low-badge" style="display:none;">0</span>
+      </a>
+
+      <a href="/sales" class="nav-link">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Sales & Orders
+      </a>
+
+      <a href="/copilot" class="nav-link">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        AI Retail Copilot
+      </a>
+    </nav>
+
+    <div class="sidebar-actions">
+      <button class="btn-sidebar-action" onclick="openAddProductModal()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+        </svg>
+        + Add Product
+      </button>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar-display">AV</div>
+      <div class="user-details">
+        <div class="user-name" id="user-name-display">Alexander Vance</div>
+        <div class="user-role" id="user-role-display">Chief Operations</div>
+      </div>
+      <a href="/login" class="btn-auth-toggle" title="Switch User / Logout">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="app-main">
+    <header class="app-header">
+      <div class="header-left">
+        <div>
+          <h1 class="page-title">Inventory Intelligence</h1>
+          <p class="page-subtitle">Catalog Management, Stock Safety Levels & SKU Margins</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="btn btn-primary" onclick="openAddProductModal()">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+          </svg>
+          Add Product
+        </button>
+        <div class="live-status-pill" id="db-health-badge">
+          <span class="status-dot"></span> Live DB
+        </div>
+      </div>
+    </header>
+
+    <div class="content-body">
+
+      <!-- FILTER CONTROLS BAR -->
+      <div class="card" style="padding: 16px 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 260px;">
+            <!-- Live Search -->
+            <div class="search-input-wrap" style="flex: 1;">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input type="text" id="inventory-search-input" class="search-input" placeholder="Search product name, SKU, or barcode..." oninput="handleSearchInput()">
+            </div>
+
+            <!-- Category Filter -->
+            <select id="category-filter-select" class="form-select" onchange="loadInventory()">
+              <option value="">All Categories</option>
+            </select>
+
+            <!-- Stock Status Filter -->
+            <select id="status-filter-select" class="form-select" onchange="loadInventory()">
+              <option value="">All Stock Statuses</option>
+              <option value="low">Low Stock (At/Below Threshold)</option>
+              <option value="in_stock">Healthy Stock</option>
+              <option value="out">Out of Stock (0 Units)</option>
+            </select>
+          </div>
+
+          <div style="font-size: 13px; color: var(--text-muted);">
+            Showing <strong id="product-count-display">0</strong> items
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY TABLE -->
+      <div class="card">
+        <div class="table-responsive">
+          <table class="grow-table">
+            <thead>
+              <tr>
+                <th>Product & SKU</th>
+                <th>Category</th>
+                <th>Cost Price</th>
+                <th>Selling Price</th>
+                <th>Margin</th>
+                <th>Current Stock</th>
+                <th>Threshold</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+              <tr><td colspan="9" style="text-align:center; padding: 30px;">Loading inventory items...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-product-title">Add New Inventory Item</h3>
+        <button class="modal-close-btn" onclick="closeProductModal()">&times;</button>
+      </div>
+
+      <form id="product-form" onsubmit="handleProductSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="form-product-id">
+
+          <div class="form-group">
+            <label class="form-label">Product Name *</label>
+            <input type="text" id="form-name" class="form-input" placeholder="e.g. Aura ANC Pro Wireless Headphones" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">SKU (Stock Keeping Unit) *</label>
+              <input type="text" id="form-sku" class="form-input" placeholder="e.g. ELEC-AUR-01" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select id="form-category" class="form-select" style="width:100%; height:42px;" required>
+                <!-- Populated via API -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Cost Price ($) *</label>
+              <input type="number" step="0.01" min="0" id="form-cost-price" class="form-input" placeholder="0.00" required oninput="updateMarginPreview()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Selling Price ($) *</label>
+              <input type="number" step="0.01" min="0" id="form-selling-price" class="form-input" placeholder="0.00" required oninput="updateMarginPreview()">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Initial Stock Quantity *</label>
+              <input type="number" min="0" id="form-stock" class="form-input" placeholder="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Low Stock Threshold *</label>
+              <input type="number" min="0" id="form-threshold" class="form-input" placeholder="10" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Calculated Unit Margin Preview</label>
+            <div id="form-margin-preview" style="font-weight:700; color:var(--success); font-size:13px;">
+              $0.00 profit per unit (0.0% margin)
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Barcode / UPC (Optional)</label>
+            <input type="text" id="form-barcode" class="form-input" placeholder="e.g. 88091234001">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description (Optional)</label>
+            <textarea id="form-description" class="form-input" rows="2" placeholder="Brief commercial description..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- QUICK RESTOCK MODAL -->
+  <div class="modal-overlay" id="restock-modal">
+    <div class="modal-box" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Quick Restock Inventory</h3>
+        <button class="modal-close-btn" onclick="closeRestockModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="restock-product-id">
+        <p id="restock-product-label" style="font-size: 13.5px; color: var(--text-secondary);"></p>
+        <div class="form-group">
+          <label class="form-label">Units to Add to Stock</label>
+          <input type="number" min="1" id="restock-quantity-input" class="form-input" value="25" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeRestockModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitRestock()">Confirm Restock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="/js/api.js"></script>
+  <script src="/js/inventory.js"></script>
+</body>
+</html>
