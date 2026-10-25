@@ -69,8 +69,21 @@ class Config:
 
         SQLALCHEMY_DATABASE_URI = db_url
     else:
-        # Local development / prototype fallback to SQLite
-        local_db_path = BASE_DIR / "growlytics.db"
+        # Development / Serverless fallback to SQLite
+        if IS_VERCEL:
+            # On Vercel serverless, /var/task is read-only; writable SQLite must live in /tmp
+            tmp_db = Path("/tmp") / "growlytics.db"
+            bundled_db = BASE_DIR / "growlytics.db"
+            if not tmp_db.exists() and bundled_db.exists():
+                try:
+                    import shutil
+                    shutil.copyfile(bundled_db, tmp_db)
+                except Exception:
+                    pass
+            local_db_path = tmp_db
+        else:
+            local_db_path = BASE_DIR / "growlytics.db"
+
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{local_db_path.as_posix()}"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
